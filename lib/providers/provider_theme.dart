@@ -24,7 +24,7 @@ class ThemeProvider extends ChangeNotifier {
     } else {
       // Si no hay preferencias guardadas, crea una con el valor por defecto
 
-      await _preferencesBox.put('themePrefs', PreferencesModel('', true));
+      await _preferencesBox.put('themePrefs', PreferencesModel('', true,true));
     }
     notifyListeners();
   }
@@ -43,7 +43,7 @@ class ThemeProvider extends ChangeNotifier {
     
     if (prefs != null) {
       await _preferencesBox.put(
-          'themePrefs', PreferencesModel(prefs.apiToken, isLight));
+          'themePrefs', PreferencesModel(prefs.apiToken, isLight,prefs.btnLeft));
     }
     notifyListeners();
   }

@@ -19,17 +19,20 @@ class PreferencesModelAdapter extends TypeAdapter<PreferencesModel> {
     return PreferencesModel(
       fields[0] as String,
       fields[1] as bool,
+      fields[2] as bool,
     );
   }
 
   @override
   void write(BinaryWriter writer, PreferencesModel obj) {
     writer
-      ..writeByte(2)
+      ..writeByte(3)
       ..writeByte(0)
       ..write(obj.apiToken)
       ..writeByte(1)
-      ..write(obj.isLight);
+      ..write(obj.isLight)
+      ..writeByte(2)
+      ..write(obj.btnLeft);
   }
 
   @override

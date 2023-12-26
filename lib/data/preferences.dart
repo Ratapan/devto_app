@@ -8,6 +8,9 @@ class PreferencesModel {
 
   @HiveField(1)
   final bool isLight;
+  
+  @HiveField(2)
+  final bool btnLeft;
 
-  PreferencesModel(this.apiToken, this.isLight);
+  PreferencesModel(this.apiToken, this.isLight, this.btnLeft);
 }

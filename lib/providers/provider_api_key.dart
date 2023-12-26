@@ -19,7 +19,7 @@ class ApiTokenProvider extends ChangeNotifier {
       _apiToken = prefs.apiToken;
     } else {
       // Establece un valor predeterminado o deja el token vacío si es lo adecuado
-      await _preferencesBox.put('apiPrefs', PreferencesModel('', true));
+      await _preferencesBox.put('apiPrefs', PreferencesModel('', true,true));
     }
     notifyListeners();
   }
@@ -28,7 +28,7 @@ class ApiTokenProvider extends ChangeNotifier {
     _apiToken = newToken;
     final prefs = _preferencesBox.get('apiPrefs');
     if (prefs != null) {
-      await _preferencesBox.put('apiPrefs', PreferencesModel(newToken, prefs.isLight));
+      await _preferencesBox.put('apiPrefs', PreferencesModel(newToken, prefs.isLight, prefs.btnLeft));
     }
     notifyListeners();
   }
