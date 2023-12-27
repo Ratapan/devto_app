@@ -3,23 +3,23 @@ import 'package:flutter/material.dart';
 import 'package:hive/hive.dart';
 
 class ApiTokenProvider extends ChangeNotifier {
-  late Box<PreferencesModel> _preferencesBox;
   String _apiToken = '';
+  late Box<PreferencesModel> _preferencesBox;
 
   ApiTokenProvider() {
-    _init();
+    init();
   }
 
   String get apiToken => _apiToken;
 
-  Future<void> _init() async {
+  Future<void> init() async {
     _preferencesBox = await Hive.openBox<PreferencesModel>('preferencesBox');
     final prefs = _preferencesBox.get('apiPrefs');
     if (prefs != null) {
       _apiToken = prefs.apiToken;
     } else {
       // Establece un valor predeterminado o deja el token vacío si es lo adecuado
-      await _preferencesBox.put('apiPrefs', PreferencesModel('', true,true));
+      await _preferencesBox.put('apiPrefs', PreferencesModel('', true, true));
     }
     notifyListeners();
   }
@@ -28,7 +28,8 @@ class ApiTokenProvider extends ChangeNotifier {
     _apiToken = newToken;
     final prefs = _preferencesBox.get('apiPrefs');
     if (prefs != null) {
-      await _preferencesBox.put('apiPrefs', PreferencesModel(newToken, prefs.isLight, prefs.btnLeft));
+      await _preferencesBox.put('apiPrefs',
+          PreferencesModel(newToken, prefs.isLight, prefs.btnLeft));
     }
     notifyListeners();
   }

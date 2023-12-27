@@ -17,9 +17,9 @@ class PreferencesModelAdapter extends TypeAdapter<PreferencesModel> {
       for (int i = 0; i < numOfFields; i++) reader.readByte(): reader.read(),
     };
     return PreferencesModel(
-      fields[0] as String,
-      fields[1] as bool,
-      fields[2] as bool,
+      fields[0] as String? ??'',
+      fields[1] as bool? ??true,
+      fields[2] as bool? ??true,
     );
   }
 

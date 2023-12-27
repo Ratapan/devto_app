@@ -1,21 +1,13 @@
-import 'package:devto_app/config/router.dart';
 import 'package:flutter/material.dart';
-import 'package:devto_app/config/database/hive_db.dart';
 import 'package:provider/provider.dart';
+import 'package:devto_app/config/router.dart';
 import 'package:devto_app/providers/providers.dart';
+import 'package:devto_app/config/database/hive_db.dart';
 
 void main() async {
   await initHiveBD();
   runApp(
-    MultiProvider(
-      providers: [
-        ChangeNotifierProvider(create: (_) => ThemeProvider()),
-        ChangeNotifierProvider(create: (_) => ApiTokenProvider()),
-        ChangeNotifierProvider(create: (_) => BtnPositionProvider()),
-        
-      ],
-      child: const MyApp(),
-    ),
+    const InitMultiProvider(app: MyApp()),
   );
 }
 
@@ -27,7 +19,7 @@ class MyApp extends StatelessWidget {
       title: 'Devto RTP',
       debugShowCheckedModeBanner: false,
       theme: Provider.of<ThemeProvider>(context).currentTheme,
-      routerConfig:  appRouter,
+      routerConfig: appRouter,
     );
   }
 }

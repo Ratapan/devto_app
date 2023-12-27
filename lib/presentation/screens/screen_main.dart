@@ -45,9 +45,7 @@ class CustomAppBar extends StatelessWidget implements PreferredSizeWidget {
       leading: IconButton(
         icon: Icon(currentIndex == 0 ? Icons.menu_outlined : Icons.arrow_back),
         onPressed: currentIndex == 0
-            ? () {
-                changeScreen(context, 1);
-              }
+            ? () {changeScreen(context, 1);}
             : () => goToHome(context),
       ),
       actions: [

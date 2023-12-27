@@ -14,6 +14,7 @@ class ThemeProvider extends ChangeNotifier {
 
   Future<void> _init() async {
     // Abre la caja de Hive
+
     _preferencesBox = await Hive.openBox<PreferencesModel>('preferencesBox');
 
     // Carga el estado del tema
@@ -23,8 +24,7 @@ class ThemeProvider extends ChangeNotifier {
       _currentTheme = prefs.isLight ? ThemeData.light() : ThemeData.dark();
     } else {
       // Si no hay preferencias guardadas, crea una con el valor por defecto
-
-      await _preferencesBox.put('themePrefs', PreferencesModel('', true,true));
+      await _preferencesBox.put('themePrefs', PreferencesModel('', true, true));
     }
     notifyListeners();
   }
@@ -33,17 +33,16 @@ class ThemeProvider extends ChangeNotifier {
     _currentTheme = (_currentTheme == ThemeData.dark())
         ? ThemeData.light()
         : ThemeData.dark();
-    //cambio de tema mi app
     await _updatePreferences(_currentTheme == ThemeData.dark() ? false : true);
-    //cambio de tema mi app
+
+    notifyListeners();
   }
 
   Future<void> _updatePreferences(bool isLight) async {
     final prefs = _preferencesBox.get('themePrefs');
-    
     if (prefs != null) {
-      await _preferencesBox.put(
-          'themePrefs', PreferencesModel(prefs.apiToken, isLight,prefs.btnLeft));
+      await _preferencesBox.put('themePrefs',
+          PreferencesModel(prefs.apiToken, isLight, prefs.btnLeft));
     }
     notifyListeners();
   }

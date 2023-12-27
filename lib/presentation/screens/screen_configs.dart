@@ -11,55 +11,85 @@ class ConfigsScreen extends StatefulWidget {
 }
 
 class _ConfigsScreenState extends State<ConfigsScreen> {
-  final token = TextEditingController();
+  late final bool light;
+  late TextEditingController token;
 
-  void init(context) {
-    print(Provider.of<ApiTokenProvider>(context, listen: false).apiToken);
-    token.text = Provider.of<ApiTokenProvider>(context, listen: false).apiToken;
+  @override
+  void initState() {
+    super.initState();
+    token = TextEditingController();
+  }
+
+  @override
+  void dispose() {
+    token.dispose();
+    super.dispose();
   }
 
   @override
   Widget build(BuildContext context) {
-    init(context);
     return Scaffold(
-      body: Center(
-        child: Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 0),
-          child: Column(
-            children: [
-              const SizedBox(height: 12),
-              TextField(
-                  obscureText: true,
-                  controller: token,
-                  decoration: const InputDecoration(
-                    labelText: 'API Key de Dev.to',
-                    hintText: 'token',
-                  ),
-                  onTapOutside: (PointerDownEvent event) =>
+      body: Padding(
+        padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 0),
+        child: Column(
+          children: [
+            const SizedBox(height: 12),
+            FutureBuilder(
+              future:
+                  Provider.of<ApiTokenProvider>(context, listen: false).init(),
+              builder: (context, snapshot) {
+                if (snapshot.connectionState == ConnectionState.done) {
+                  token.text =
                       Provider.of<ApiTokenProvider>(context, listen: false)
-                          .setApiToken(token.text)),
-              const SizedBox(height: 12),
-              Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  const Text(
-                    'Dark mode',
-                    style: TextStyle(fontSize: 16),
-                  ),
-                  Switch(
-                    value: Provider.of<ThemeProvider>(context, listen: false)
-                            .currentTheme ==
-                        ThemeData.light(),
-                    activeColor: Colors.deepPurple,
-                    onChanged: (bool value) {
-                      Provider.of<ThemeProvider>(context, listen: false)
-                          .changeMode();
+                          .apiToken;
+                  return TextField(
+                      obscureText: true,
+                      controller: token,
+                      decoration: const InputDecoration(
+                        labelText: 'API Key de Dev.to',
+                        hintText: 'token',
+                      ),
+                      onSubmitted: (value) {
+                        Provider.of<ApiTokenProvider>(context, listen: false)
+                            .setApiToken(value);
+                      });
+                } else {
+                  return TextField(
+                    obscureText: true,
+                    decoration: const InputDecoration(
+                      labelText: 'API Key de Dev.to',
+                      hintText: 'token',
+                    ),
+                    onSubmitted: (value) {
+                      Provider.of<ApiTokenProvider>(context, listen: false)
+                          .setApiToken(value);
                     },
-                  ),
-                ],
-              )
-            ],
-          ),
+                  );
+                }
+              },
+            ),
+            const SizedBox(height: 12),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                const Text(
+                  'Dark mode',
+                  style: TextStyle(fontSize: 16),
+                ),
+                Consumer<ThemeProvider>(
+                  builder: (context, themeProvider, child) {
+                    return Switch(
+                      value: themeProvider.currentTheme == ThemeData.light(),
+                      activeColor: Colors.deepPurple,
+                      onChanged: (bool value) {
+                        themeProvider.changeMode();
+                      },
+                    );
+                  },
+                ),
+              ],
+            )
+          ],
         ),
       ),
     );
