@@ -9,8 +9,21 @@ class HomeScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return const Scaffold(
-      body: Center(
-        child: Text('home'),
+      body: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          Center(
+            child: Text('No tienes artículos', style: TextStyle( fontSize: 16),),
+          ),
+          Center(
+            child: Text('descargados', style: TextStyle( fontSize: 16),),
+          ),
+          SizedBox(height: 8),
+          Center(
+            child:Icon(Icons.download_outlined, size: 36),
+          ),
+          SizedBox(height: 48),
+        ],
       ),
     );
   }
