@@ -13,88 +13,51 @@ class SearchScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    var segmentedButtonStyle = ButtonStyle(
-      padding: MaterialStateProperty.all(EdgeInsets.zero),
-      fixedSize: MaterialStateProperty.all(Size.zero),
-      //textStyle: MaterialStateProperty.all(TextStyle(height: .4),),
+    var buttonStyle = TextButton.styleFrom(
+      padding: const EdgeInsets.all(0),
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(5.0),
+      ),
+      elevation: 1,
     );
-    List<ButtonSegment> buttonSegments(List<EndpointApi> edpointsButtons) {
-      return edpointsButtons
-          .map(
-            (endpoint) => ButtonSegment(
-              value: endpoint,
-              label: Text(endpoint.name),
-            ),
-          )
-          .toList();
+
+    List<Widget> getTabs(List<EndpointApi> edpointsButtons) {
+      List<Widget> buttons = [];
+      edpointsButtons.asMap().forEach((index, endpoint) {
+        buttons.addAll([
+          TextButton(
+              style: buttonStyle,
+              child: Text(endpoint.name),
+              onPressed: () {
+                Provider.of<ArticlesProvider>(context).changeEndpoint(index);
+              }),
+          const SizedBox(
+            width: 4,
+          ),
+        ]);
+      });
+
+      return buttons;
     }
 
     final articlesProvider = Provider.of<ArticlesProvider>(context);
     final List<EndpointApi> edpointsButtons = articlesProvider.edpointsButtons;
-    final segments = buttonSegments(edpointsButtons);
+    final tabs = getTabs(edpointsButtons);
+
     return Scaffold(
-      appBar: const CustomSearchAppBar(currentIndex: 0),
-      body: Padding(
-        padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 0),
-        child: Column(
-          children: [
-            SegmentedButton(
-                style: segmentedButtonStyle,
-                segments: segments,
-                selected: {segments[0].value}),
-            const Center(
-              child: Text('search'),
+      appBar: CustomSearchAppBar(currentIndex: 0),
+      body: Column(
+        children: [
+          Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 8,vertical: 0),
+            child: Row(
+            
+              children: tabs,
             ),
-            const ArticlesList(),
-          ],
-        ),
+          ),
+          const ArticlesList()
+        ],
       ),
-    );
-  }
-}
-
-class ArticlesList extends StatelessWidget {
-  const ArticlesList({super.key});
-
-  @override
-  Widget build(BuildContext context) {
-    return Consumer<ArticlesProvider>(
-      builder: (context, articlesProvider, child) {
-        //todo: Arreglar los temas de asincronia
-        return FutureBuilder<List<Article>>(
-          future: articlesProvider.getArticles(),
-          builder: (context, snapshot) {
-            if (snapshot.connectionState == ConnectionState.waiting) {
-              return const Center(
-                child: CircularProgressIndicator(),
-              );
-            } else if (snapshot.hasError) {
-              return Center(
-                child: Text('Error: ${snapshot.error}'),
-              );
-            } else if (!snapshot.hasData || snapshot.data!.isEmpty) {
-              return const Center(
-                child: Text('No articles found'),
-              );
-            }
-
-            List<Article> articles = snapshot.data!;
-            return ListView.builder(
-              itemCount: articles.length,
-              itemBuilder: (context, index) {
-                Article article = articles[index];
-                return ListTile(
-                  leading: article.coverImage != null
-                      ? Image.network(article.backgroundImage)
-                      : null,
-                  title: Text(article.title),
-                  // ...otros atributos del artículo...
-                );
-              },
-            );
-          },
-        );
-      },
     );
   }
 }

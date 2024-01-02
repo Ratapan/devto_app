@@ -35,6 +35,14 @@ final appRouter = GoRouter(
             return const ConfigsScreen();
           },
         ),
+        GoRoute(
+          path: 'article/:id',
+          name: ArticleScreen.name,
+          builder: (BuildContext context, GoRouterState state) {
+            final id = int.parse(state.pathParameters['id'] ?? '-1');
+            return ArticleScreen(articleId: id);
+          },
+        ),
       ],
     ),
     GoRoute(

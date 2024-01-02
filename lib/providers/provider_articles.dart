@@ -11,48 +11,88 @@ import 'package:devto_app/data/models/models.dart';
 class ArticlesProvider extends ChangeNotifier {
   final String _baseUrl = 'dev.to';
   final String _baseUrlEndPoint = '/api/';
+
+  int _selectedEndpoint = 0;
+
+  List<Article> _articles = [];
   final List<EndpointApi> _edpointsButtons = [
     EndpointApi(
       name: 'Articulos',
       path: 'articles',
     ),
     EndpointApi(
-      name: 'Usuarios',
-      path: 'articles',
-    ),
-    EndpointApi(
-      name: 'Otro',
-      path: 'articles',
+      name: 'Organisaciones',
+      path: 'organizations/{}/articles',
     ),
   ];
 
   List<EndpointApi> get edpointsButtons => _edpointsButtons;
+  List<Article> get articles => _articles;
 
-  Future<String> _getJsonData(String endpoint, String tag,
+  int get selectedEndpoint => _selectedEndpoint;
+  void changeEndpoint(int end) {
+    _selectedEndpoint = end;
+    notifyListeners();
+  }
+
+  Future<String> _getJsonData(String endpoint, String input,
       [int page = 1]) async {
     final preferencesBox =
         await Hive.openBox<PreferencesModel>('preferencesBox');
     final prefs = preferencesBox.get('apiPrefs');
-    print({
-      '_baseUrl': _baseUrl,
-      'api-key': prefs?.apiToken,
-      'page': '$page',
-      'tag': tag,
-    });
-    final url = Uri.https(_baseUrl, '$_baseUrlEndPoint$endpoint', {
-      'api-key': prefs?.apiToken,
-      'page': '$page',
-      'tag': tag,
-    });
 
+    List<String> splited = input.split(',');
+    List<String> tags = splited
+        .where((el) => el.isNotEmpty && el[0] != '@' && el[0] != '!')
+        .toList();
+    List<String> tagsExclude =
+        splited.where((el) => el.isNotEmpty && el[0] == '!').toList();
+
+    var queryParameters = {
+      'api-key': prefs?.apiToken,
+      'page': '$page',
+      'tags': tags.join(','),
+    };
+    if (tagsExclude.isNotEmpty) {
+      queryParameters['tags_exclude'] = tagsExclude.join(',');
+    }
+
+    List<String> username =
+        splited.where((el) => el.isNotEmpty && el[0] == '@').toList();
+    if (username.isNotEmpty)
+      queryParameters['username'] = username[0].replaceAll('@', '');
+
+    print(queryParameters);
+
+    final url =
+        Uri.https(_baseUrl, '$_baseUrlEndPoint$endpoint', queryParameters);
     final response = await http.get(url);
-    print('response:\n.\n ${response.body}');
     return response.body;
   }
 
-  Future<List<Article>> getArticles() async {
-    final jsonData = await _getJsonData('articles', 'flutter');
-    final data = json.decode(jsonData) as List;
-    return data.map((json) => Article.fromMap(json)).toList();
+  void getArticles(String input) async {
+    final jsonData = await _getJsonData('articles', input);
+    final articles = Article.fromJsonToList(jsonData);
+
+    _articles = articles;
+    notifyListeners();
+  }
+
+  Future<Article> getArticleById(int id) async {
+    final article = _articles.where((article) => article.id == id);
+    if (article.isNotEmpty) return article.first;
+
+    final preferencesBox =
+        await Hive.openBox<PreferencesModel>('preferencesBox');
+    final prefs = preferencesBox.get('apiPrefs');
+
+    var queryParameters = {
+      'api-key': prefs?.apiToken,
+    };
+    final url =
+        Uri.https(_baseUrl, '${_baseUrlEndPoint}articles/$id', queryParameters);
+    final response = await http.get(url);
+
+    return Article.fromMap(json.decode(response.body));
   }
 }

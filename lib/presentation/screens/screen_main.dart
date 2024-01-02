@@ -12,6 +12,7 @@ class MainScreen extends StatelessWidget {
     HomeScreen(),
     ConfigsScreen(),
     SearchScreen(tabIndex: 0),
+    ArticleScreen(articleId: 0),
   ];
   final List<int> widthOutDefaultAppBar = [2];
 
