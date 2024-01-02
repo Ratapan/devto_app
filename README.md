@@ -1,16 +1,8 @@
-# devto_app
+# Devto app
 
-A new Flutter project.
+Un proyecto que atreves de la API de [dev.to](https://dev.to), se encargara de buscar y guardar artículos descargados. Con el fin de aprender a usar flutter.
 
-## Getting Started
-
-This project is a starting point for a Flutter application.
-
-A few resources to get you started if this is your first Flutter project:
-
-- [Lab: Write your first Flutter app](https://docs.flutter.dev/get-started/codelab)
-- [Cookbook: Useful Flutter samples](https://docs.flutter.dev/cookbook)
-
-For help getting started with Flutter development, view the
-[online documentation](https://docs.flutter.dev/), which offers tutorials,
-samples, guidance on mobile development, and a full API reference.
+### Home | Config |  Search
+![imagenes iniciales](./readmeAssets/1.png)
+### Search | Article
+![Imagenes de busqueda y articulo](./readmeAssets/2.png)
