@@ -1,5 +1,6 @@
 import 'package:devto_app/providers/providers.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_markdown/flutter_markdown.dart';
 import 'package:go_router/go_router.dart';
 import 'package:provider/provider.dart';
 
@@ -21,15 +22,12 @@ class ArticleScreen extends StatelessWidget {
           future: provider.getArticleById(articleId),
           builder: (context, snapshot) {
             if (snapshot.connectionState == ConnectionState.waiting) {
-              // Mostrar un indicador de carga mientras se espera la respuesta
-              return CircularProgressIndicator();
+              return const Center(child: CircularProgressIndicator());
             } else if (snapshot.hasError) {
-              // Manejar el error si ocurre alguno
-              return Text('Error: ${snapshot.error}');
+              return Scaffold(
+                  body: Center(child: Text('Error: ${snapshot.error}')));
             } else if (snapshot.hasData) {
-              // Acceder al artículo una vez que esté disponible
               final article = snapshot.data!;
-
               return Scaffold(
                 body: ArticleWidget(article: article),
               );
@@ -54,13 +52,32 @@ class ArticleWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Column(
-      children: [
-        ArticleHeader(article: article),
-        //todo: crear una description(usuario, desc,tags)
-        //todo: crear un body para el markdown
-        //todo: crear zona de commentarios
-      ],
+    return Expanded(
+      child: Column(
+        children: [
+          ArticleHeader(article: article),
+          //todo: crear una description(usuario, desc,tags)
+          //todo: crear un body para el markdown
+          AticleMarkdownBody(article: article),
+          //todo: crear zona de commentarios
+        ],
+      ),
+    );
+  }
+}
+
+class AticleMarkdownBody extends StatelessWidget {
+  const AticleMarkdownBody({
+    super.key,
+    required this.article,
+  });
+
+  final Article article;
+
+  @override
+  Widget build(BuildContext context) {
+    return Expanded(
+      child: Markdown(selectable: true, data: article.bodyMarkdown, ),
     );
   }
 }

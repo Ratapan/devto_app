@@ -1,10 +1,10 @@
 class User {
   String name;
   String username;
-  dynamic twitterUsername;
+  String twitterUsername;
   String githubUsername;
   int userId;
-  dynamic websiteUrl;
+  String websiteUrl;
   String profileImage;
   String profileImage90;
 

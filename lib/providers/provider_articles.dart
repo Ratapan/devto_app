@@ -79,20 +79,26 @@ class ArticlesProvider extends ChangeNotifier {
   }
 
   Future<Article> getArticleById(int id) async {
-    final article = _articles.where((article) => article.id == id);
-    if (article.isNotEmpty) return article.first;
+    try {
+      final preferencesBox =await Hive.openBox<PreferencesModel>('preferencesBox');
+      final prefs = preferencesBox.get('apiPrefs');
+      
+      var queryParameters = {
+        'api-key': prefs?.apiToken,
+      };
 
-    final preferencesBox =
-        await Hive.openBox<PreferencesModel>('preferencesBox');
-    final prefs = preferencesBox.get('apiPrefs');
+      final url = Uri.https(_baseUrl, '${_baseUrlEndPoint}articles/$id', queryParameters);
+      final response = await http.get(url);
 
-    var queryParameters = {
-      'api-key': prefs?.apiToken,
-    };
-    final url =
-        Uri.https(_baseUrl, '${_baseUrlEndPoint}articles/$id', queryParameters);
-    final response = await http.get(url);
-
-    return Article.fromMap(json.decode(response.body));
+      if (response.statusCode == 200) {
+        final decode = json.decode(response.body);  
+        final article = Article.fromMap(decode);
+        return article;
+      } else {
+        throw Exception('Failed to load article');
+      }
+    } catch (e) {
+      throw Exception(e);
+    }
   }
 }

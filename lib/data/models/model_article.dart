@@ -21,11 +21,10 @@ class Article {
   List<String> tagList;
   String canonicalUrl;
   int readingTimeMinutes;
-  User user;
+
+  User? user;
   Organization? organization;
   FlareTag? flareTag;
-
-  String? heroId;
 
   Article({
     required this.typeOf,
@@ -46,8 +45,8 @@ class Article {
     required this.coverImage,
     required this.canonicalUrl,
     required this.readingTimeMinutes,
-    required this.user,
     required this.tagList,
+    this.user,
     this.organization,
     this.flareTag,
   });
@@ -65,14 +64,25 @@ class Article {
   }
 
   factory Article.fromMap(Map<String, dynamic> json) {
-    return Article(
+    final user = json['user'] != null 
+        ? User.fromMap(json['user']) 
+        : null;
+    final organization = json['organization'] != null
+        ? Organization.fromMap(json['organization'])
+        : null;
+    final flareTag =
+        json['flare_tag'] != null 
+        ? FlareTag.fromMap(json['flare_tag']) 
+        : null;
+
+    final article = Article(
       typeOf: json['type_of'] ?? '',
       id: json['id'] ?? 0,
       title: json['title'] ?? '',
       description: json['description'] ?? '',
       published:
-          json['published'] != null && 
-          json['published'].toString() == 'true',
+          json['published'] != null 
+          && json['published'].toString() == 'true',
       publishedAt: json['published_at'] != null
           ? DateTime.parse(json['published_at'])
           : DateTime.now(),
@@ -89,17 +99,17 @@ class Article {
       positiveReactionsCount: json['positive_reactions_count'] ?? 0,
       coverImage: json['cover_image'] ?? 'default',
       tagList: json['tag_list'] != null
-          ? List<String>.from(json['tag_list'].map((x) => x.toString()))
+          ? json['tag_list'].runtimeType.toString() == 'String'?
+            json['tag_list'].split(','):
+            List<String>.from(json['tag_list'].map((x) => x.toString()))
           : [],
       canonicalUrl: json['canonical_url'] ?? '',
       readingTimeMinutes: json['reading_time_minutes'] ?? 0,
-      user: User.fromMap(json['user']),
-      flareTag: json['flare_tag'] != null
-          ? FlareTag.fromMap(json['flare_tag'])
-          : null,
-      organization: json['organization'] != null
-          ? Organization.fromMap(json['organization'])
-          : null,
+      user: user,
+      flareTag: flareTag,
+      organization: organization,
     );
+
+    return article;
   }
 }
