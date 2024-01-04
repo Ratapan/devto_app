@@ -68,8 +68,8 @@ class ItemHeader extends StatelessWidget {
               begin: Alignment.bottomCenter,
               end: Alignment.topCenter,
               colors: [
-                Colors.black.withOpacity(0.9), // Más opaco en la parte inferior
-                Colors.transparent, // Transparente hacia la parte superior
+                Colors.black.withOpacity(0.9), 
+                Colors.transparent, 
               ],
             ),
           ),

@@ -1,5 +1,3 @@
-import 'package:devto_app/providers/providers.dart';
-import 'package:provider/provider.dart';
 import 'package:flutter/material.dart';
 
 class QuickFloatingActionBtn extends StatefulWidget {
@@ -14,11 +12,6 @@ bool toggle = true;
 class _QuickFloatingActionBtnState extends State<QuickFloatingActionBtn> {
   @override
   Widget build(BuildContext context) {
-    bool floatingButtonLeft =
-        Provider.of<BtnPositionProvider>(context, listen: false)
-            .currentPosition;
-    print('floatingButtonLeft: $floatingButtonLeft');
-
     return SizedBox(
       height: MediaQuery.of(context).size.height,
       width: MediaQuery.of(context).size.width,

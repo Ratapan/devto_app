@@ -22,8 +22,6 @@ class BtnPositionProvider extends ChangeNotifier {
     if (prefs != null) {
       _currentPosition = prefs.btnLeft ? true : false;
     } else {
-      // Si no hay preferencias guardadas, crea una con el valor por defecto
-
       await _preferencesBox.put(
           'positionBtnPrefs', PreferencesModel('', true, true));
     }
@@ -32,11 +30,7 @@ class BtnPositionProvider extends ChangeNotifier {
 
   Future<void> changePosition() async {
     _currentPosition = (_currentPosition == false) ? true : false;
-    //cambio de posicion
-    print('object $_currentPosition');
-    
     await _updatePreferences((_currentPosition == false) ? false : true);
-    //cambio de posicion
   }
 
   Future<void> _updatePreferences(bool btnLeft) async {

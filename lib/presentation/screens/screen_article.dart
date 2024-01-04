@@ -17,7 +17,6 @@ class ArticleScreen extends StatelessWidget {
     return Consumer<ArticlesProvider>(
       builder: (context, provider, child) {
         // Usar FutureBuilder para manejar la operación asíncrona
-
         return FutureBuilder<Article>(
           future: provider.getArticleById(articleId),
           builder: (context, snapshot) {

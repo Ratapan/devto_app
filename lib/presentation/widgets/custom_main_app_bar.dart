@@ -10,7 +10,7 @@ class CustomAppBar extends StatelessWidget implements PreferredSizeWidget {
   }
 
   void goToHome(BuildContext context) {
-    context.go('/main/0'); // Volver a Home
+    context.go('/main/0');
   }
 
   @override

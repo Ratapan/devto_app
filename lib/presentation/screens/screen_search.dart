@@ -20,7 +20,6 @@ class SearchScreen extends StatelessWidget {
       ),
       elevation: 1,
     );
-
     List<Widget> getTabs(List<EndpointApi> edpointsButtons) {
       List<Widget> buttons = [];
       edpointsButtons.asMap().forEach((index, endpoint) {
@@ -44,20 +43,33 @@ class SearchScreen extends StatelessWidget {
     final List<EndpointApi> edpointsButtons = articlesProvider.edpointsButtons;
     final tabs = getTabs(edpointsButtons);
 
-    return Scaffold(
-      appBar: CustomSearchAppBar(currentIndex: 0),
-      body: Column(
-        children: [
-          Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 8,vertical: 0),
-            child: Row(
-            
-              children: tabs,
+    return Consumer<ArticlesProvider>(
+      builder: (context, provider, child) {
+        if (provider.searching) {
+          return Scaffold(
+            appBar: CustomSearchAppBar(currentIndex: 0),
+            body: const Center(
+              child: CircularProgressIndicator(),
             ),
-          ),
-          const ArticlesList()
-        ],
-      ),
+          );
+        } else {
+          return Scaffold(
+            appBar: CustomSearchAppBar(currentIndex: 0),
+            body: Column(
+              children: [
+                Padding(
+                  padding:
+                      const EdgeInsets.symmetric(horizontal: 8, vertical: 0),
+                  child: Row(
+                    children: tabs,
+                  ),
+                ),
+                const ArticlesList()
+              ],
+            ),
+          );
+        }
+      },
     );
   }
 }

@@ -16,6 +16,7 @@ class Article {
   int pageViewsCount;
   DateTime publishedTimestamp;
   String bodyMarkdown;
+  String yamlMarkdown;
   int positiveReactionsCount;
   String coverImage;
   List<String> tagList;
@@ -46,6 +47,7 @@ class Article {
     required this.canonicalUrl,
     required this.readingTimeMinutes,
     required this.tagList,
+    required this.yamlMarkdown,
     this.user,
     this.organization,
     this.flareTag,
@@ -64,16 +66,25 @@ class Article {
   }
 
   factory Article.fromMap(Map<String, dynamic> json) {
-    final user = json['user'] != null 
-        ? User.fromMap(json['user']) 
-        : null;
+    final user = json['user'] != null ? User.fromMap(json['user']) : null;
     final organization = json['organization'] != null
         ? Organization.fromMap(json['organization'])
         : null;
     final flareTag =
-        json['flare_tag'] != null 
-        ? FlareTag.fromMap(json['flare_tag']) 
-        : null;
+        json['flare_tag'] != null ? FlareTag.fromMap(json['flare_tag']) : null;
+
+    var bodyMarkdown = '';
+    var yamlMarkdown = '';
+
+    if(json['body_markdown'] != null){
+      List<String> parts = json['body_markdown'].split('---\n\n\n');
+    if (parts.length == 3) {
+      bodyMarkdown = parts[2];
+      yamlMarkdown = parts[1];
+    } else {
+      bodyMarkdown = json['body_markdown'];
+    }
+    }
 
     final article = Article(
       typeOf: json['type_of'] ?? '',
@@ -81,8 +92,7 @@ class Article {
       title: json['title'] ?? '',
       description: json['description'] ?? '',
       published:
-          json['published'] != null 
-          && json['published'].toString() == 'true',
+          json['published'] != null && json['published'].toString() == 'true',
       publishedAt: json['published_at'] != null
           ? DateTime.parse(json['published_at'])
           : DateTime.now(),
@@ -95,13 +105,14 @@ class Article {
       publishedTimestamp: json['published_timestamp'] != null
           ? DateTime.parse(json['published_timestamp'])
           : DateTime.now(),
-      bodyMarkdown: json['body_markdown'] ?? '',
+      bodyMarkdown: bodyMarkdown,
+      yamlMarkdown: yamlMarkdown,
       positiveReactionsCount: json['positive_reactions_count'] ?? 0,
       coverImage: json['cover_image'] ?? 'default',
       tagList: json['tag_list'] != null
-          ? json['tag_list'].runtimeType.toString() == 'String'?
-            json['tag_list'].split(','):
-            List<String>.from(json['tag_list'].map((x) => x.toString()))
+          ? json['tag_list'].runtimeType.toString() == 'String'
+              ? json['tag_list'].split(',')
+              : List<String>.from(json['tag_list'].map((x) => x.toString()))
           : [],
       canonicalUrl: json['canonical_url'] ?? '',
       readingTimeMinutes: json['reading_time_minutes'] ?? 0,
